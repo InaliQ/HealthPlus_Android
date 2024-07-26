@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="titulo1">
+        <item name="android:textSize">40sp</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+    <style name="CircleImageView" parent="Widget.MaterialComponents.TimePicker.ImageButton">
+        <item name="shapeAppearance">@style/CircleShape</item>
+    </style>
+
+    <style name="CircleShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">50%</item>
+    </style>
+</resources>
