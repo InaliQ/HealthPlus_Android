@@ -1,3 +1,28 @@
 <resources>
-    <string name="app_name">Health</string>
+    <string name="app_name">Health Plus</string>
+    <string name="contrasenia">Contraseña</string>
+    <string name="usuario">Usuario</string>
+    <string name="enviar">Enviar</string>
+    <string name="title_activity_pacientes_list">pacientesList</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_registro">Registro</string>
+    <string name="title_notifications">Notificasiones</string>
+    <string name="title_pacientes">Pacientes</string>
+    <string name="avatar">Avatar</string>
+    <string name="guionbajo">-</string>
+    <string name="warning">Warning</string>
+    <string name="detalles">Detalles</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
