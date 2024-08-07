@@ -29,7 +29,7 @@
         android:layout_height="100dp"
         android:layout_gravity="center"
         android:text="Frecuencia: "
-        android:textColor="@android:color/white"
+        android:textColor="@android:color/black"
         android:textSize="18sp"
         android:layout_marginTop="16dp" />
 

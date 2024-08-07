@@ -1,7 +1,9 @@
-package com.softli.health.views.ui.pacientes
+package com.softli.health.views.ui.recordatorio
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
@@ -9,22 +11,22 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.softli.health.R
-import android.util.Log
-import androidx.navigation.fragment.findNavController
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
-import com.softli.health.config.SessionManager
+import com.softli.health.R
+import com.softli.health.views.ui.recordatorio.placeholder.PlaceholderContent
 
-class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
-    private lateinit var pacientesViewModel: PacientesViewModel
+/**
+ * A fragment representing a list of Items.
+ */
+class RecordatorioFragment : Fragment(), DataClient.OnDataChangedListener {
+    private lateinit var recordatorioViewModel: RecordatorioViewModel
     private lateinit var recyclerView: RecyclerView
-    private lateinit var adapter: MyPacienteRecyclerViewAdapter
-    lateinit var sessionManager: SessionManager
+    private lateinit var adapter: MyRecordatorioRecyclerViewAdapter
 
     private var columnCount = 1
 
@@ -34,49 +36,39 @@ class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
-        mandarContadorReloj()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_recordatorio_list, container, false)
 
-        recyclerView = view.findViewById(R.id.recyclerViewPacientes)
+        recyclerView = view.findViewById(R.id.list)
         if (recyclerView == null) {
             Log.e("PacienteFragment", "RecyclerView no encontrado. Asegúrate de que el ID es correcto en el XML.")
         } else {
-            sessionManager = SessionManager(requireContext())
             recyclerView.layoutManager = LinearLayoutManager(context)
 
-            pacientesViewModel = ViewModelProvider(this).get(PacientesViewModel::class.java)
-            pacientesViewModel.pacientes.observe(viewLifecycleOwner, Observer { pacientes ->
-                Log.d("PacienteFragment", "Actualizando la lista de pacientes: $pacientes")
-                adapter = MyPacienteRecyclerViewAdapter(pacientes,
-                    onWarningClick = { paciente ->
-                        // Aquí realizamos la transición a AlertasFragment
-                        sessionManager.savePaciente(paciente)
-                        findNavController().navigate(R.id.action_pacienteFragment_to_alertasFragment)
-                    },
-                    onRecordatorioClick = { paciente ->
-                        sessionManager.savePaciente(paciente)
-                        findNavController().navigate(R.id.action_navigation_pacientes_to_navigation_recordatorio)
-                    }
-                )
+            recordatorioViewModel = ViewModelProvider(this).get(RecordatorioViewModel::class.java)
+            recordatorioViewModel.recordatorios.observe(viewLifecycleOwner, Observer { recordatorios ->
+                Log.d("PacienteFragment", "Actualizando la lista de pacientes: $recordatorios")
+                adapter = MyRecordatorioRecyclerViewAdapter(recordatorios)
                 recyclerView.adapter = adapter
             })
         }
-
         return view
     }
 
     companion object {
+
+        // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
 
+        // TODO: Customize parameter initialization
         @JvmStatic
         fun newInstance(columnCount: Int) =
-            PacienteFragment().apply {
+            RecordatorioFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ARG_COLUMN_COUNT, columnCount)
                 }
@@ -103,4 +95,3 @@ class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
         }
     }
 }
-

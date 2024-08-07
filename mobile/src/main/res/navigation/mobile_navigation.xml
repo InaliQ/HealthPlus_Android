@@ -3,19 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/navigation_home">
-
-    <fragment
-        android:id="@+id/navigation_home"
-        android:name="com.softli.health.views.ui.home.HomeFragment"
-        android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+    app:startDestination="@+id/navigation_pacientes">
 
     <fragment
         android:id="@+id/navigation_registro"
         android:name="com.softli.health.views.ui.pacientes.PacienteRegistroFragment"
         android:label="@string/title_registro"
         tools:layout="@layout/fragment_paciente_registro" />
+
+    <fragment
+        android:id="@+id/navigation_recordatorio"
+        android:name="com.softli.health.views.ui.recordatorio.RecordatorioFragment"
+        android:label="@string/recordatorio"
+        tools:layout="@layout/fragment_recordatorio_list" />
 
     <fragment
         android:id="@+id/navigation_notifications"
@@ -27,5 +27,14 @@
         android:id="@+id/navigation_pacientes"
         android:name="com.softli.health.views.ui.pacientes.PacienteFragment"
         android:label="@string/title_pacientes"
-        tools:layout="@layout/fragment_item_list" />
+        tools:layout="@layout/fragment_item_list">
+        <action
+            android:id="@+id/action_pacienteFragment_to_alertasFragment"
+            app:destination="@id/navigation_notifications" />
+        <action
+            android:id="@+id/action_navigation_pacientes_to_navigation_recordatorio"
+            app:destination="@id/navigation_recordatorio" />
+    </fragment>
+
+
 </navigation>

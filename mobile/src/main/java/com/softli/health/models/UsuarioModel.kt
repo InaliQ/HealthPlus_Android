@@ -8,5 +8,6 @@ data class UsuarioModel(
     @SerializedName("idPersona") val idPersona: Int,
     @SerializedName("nombre") val nombre: String,
     @SerializedName("primerApellido") val primerApellido: String,
-    @SerializedName("segundoApellido") val segundoApellido: String
+    @SerializedName("segundoApellido") val segundoApellido: String,
+    @SerializedName("enfermero") val enfermero: Enfermero
 )

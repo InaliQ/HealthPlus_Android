@@ -4,11 +4,15 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.google.android.gms.wearable.DataClient
+import com.google.android.gms.wearable.DataEvent
+import com.google.android.gms.wearable.DataEventBuffer
+import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
@@ -16,6 +20,7 @@ import com.softli.health.EmergenciaActivity
 import com.softli.health.R
 
 class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
+    private var counter = 0
     private lateinit var imgGrafica: ImageView
     private lateinit var barraProgreso: ProgressBar
     private lateinit var txtLatidos: TextView
@@ -67,7 +72,6 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
-        // Manejo de datos recibidos si es necesario
     }
 
     override fun onDestroy() {
