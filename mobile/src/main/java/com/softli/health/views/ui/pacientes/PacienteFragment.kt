@@ -11,17 +11,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.softli.health.R
 import android.util.Log
+import androidx.navigation.fragment.findNavController
 import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
+import com.softli.health.config.SessionManager
 
 class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
     private lateinit var pacientesViewModel: PacientesViewModel
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: MyPacienteRecyclerViewAdapter
+    lateinit var sessionManager: SessionManager
 
     private var columnCount = 1
 
@@ -44,13 +47,23 @@ class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
         if (recyclerView == null) {
             Log.e("PacienteFragment", "RecyclerView no encontrado. Asegúrate de que el ID es correcto en el XML.")
         } else {
+            sessionManager = SessionManager(requireContext())
             recyclerView.layoutManager = LinearLayoutManager(context)
 
             pacientesViewModel = ViewModelProvider(this).get(PacientesViewModel::class.java)
-
             pacientesViewModel.pacientes.observe(viewLifecycleOwner, Observer { pacientes ->
                 Log.d("PacienteFragment", "Actualizando la lista de pacientes: $pacientes")
-                adapter = MyPacienteRecyclerViewAdapter(pacientes)
+                adapter = MyPacienteRecyclerViewAdapter(pacientes,
+                    onWarningClick = { paciente ->
+                        // Aquí realizamos la transición a AlertasFragment
+                        sessionManager.savePaciente(paciente)
+                        findNavController().navigate(R.id.action_pacienteFragment_to_alertasFragment)
+                    },
+                    onRecordatorioClick = { paciente ->
+                        sessionManager.savePaciente(paciente)
+                        findNavController().navigate(R.id.action_navigation_pacientes_to_navigation_recordatorio)
+                    }
+                )
                 recyclerView.adapter = adapter
             })
         }
@@ -90,3 +103,4 @@ class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
         }
     }
 }
+

@@ -48,7 +48,7 @@ class AlertasFragment : Fragment() {
 
             alertasViewModel = ViewModelProvider(this).get(AlertasViewModel::class.java)
 
-            alertasViewModel.alertas.observe(viewLifecycleOwner, Observer { alertas ->
+            alertasViewModel.alerta.observe(viewLifecycleOwner, Observer { alertas ->
                 Log.d("PacienteFragment", "Actualizando la lista de pacientes: $alertas")
                 adapter = MyAlertasRecyclerViewAdapter(alertas)
                 recyclerView.adapter = adapter

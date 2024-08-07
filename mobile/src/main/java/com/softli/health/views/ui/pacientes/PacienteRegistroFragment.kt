@@ -41,8 +41,6 @@ class PacienteRegistroFragment : Fragment() {
     lateinit var codigoPostalEditText: TextInputEditText
     lateinit var coloniaInputLayout: TextInputLayout
     lateinit var coloniaEditText: TextInputEditText
-    lateinit var numPacienteInputLayout: TextInputLayout
-    lateinit var numPacienteEditText: TextInputEditText
     lateinit var alturaInputLayout: TextInputLayout
     lateinit var alturaEditText: TextInputEditText
     lateinit var pesoInputLayout: TextInputLayout
@@ -82,8 +80,6 @@ class PacienteRegistroFragment : Fragment() {
         codigoPostalEditText = view.findViewById(R.id.codigoPostalEditText)
         coloniaInputLayout = view.findViewById(R.id.coloniaInputLayout)
         coloniaEditText = view.findViewById(R.id.coloniaEditText)
-        numPacienteInputLayout = view.findViewById(R.id.numPacienteInputLayout)
-        numPacienteEditText = view.findViewById(R.id.numPacienteEditText)
         alturaInputLayout = view.findViewById(R.id.alturaInputLayout)
         alturaEditText = view.findViewById(R.id.alturaEditText)
         pesoInputLayout = view.findViewById(R.id.pesoInputLayout)
@@ -96,7 +92,7 @@ class PacienteRegistroFragment : Fragment() {
             if (formularioValido()) {
                 val paciente = Paciente(
                     0,
-                    numPacienteEditText.text.toString(),
+                    generarNumPaciente(nombreEditText.text.toString()),
                     alturaEditText.text.toString(),
                     pesoEditText.text.toString(),
                     tipoDeSangreEditText.text.toString(),
@@ -142,6 +138,17 @@ class PacienteRegistroFragment : Fragment() {
             })
     }
 
+    fun generarNumPaciente(nombre: String): String {
+        val now = java.util.Date()
+        val horas = now.hours.toString().padStart(2, '0')
+        val min = now.minutes.toString().padStart(2, '0')
+        val seg = now.seconds.toString().padStart(2, '0')
+        val primerasDos = nombre.substring(0, 2).uppercase()
+        val ultima = nombre.substring(nombre.length - 1).uppercase()
+
+        return "P${primerasDos}${horas}${min}${seg}${ultima}"
+    }
+
     fun reiniciarFormulario() {
         nombreEditText.text?.clear()
         primerApellidoEditText.text?.clear()
@@ -151,7 +158,6 @@ class PacienteRegistroFragment : Fragment() {
         numeroEditText.text?.clear()
         codigoPostalEditText.text?.clear()
         coloniaEditText.text?.clear()
-        numPacienteEditText.text?.clear()
         alturaEditText.text?.clear()
         pesoEditText.text?.clear()
         tipoDeSangreEditText.text?.clear()
@@ -206,12 +212,6 @@ class PacienteRegistroFragment : Fragment() {
             valido = false
         } else {
             coloniaInputLayout.error = ""
-        }
-        if (numPacienteEditText.text.toString().isEmpty()) {
-            numPacienteInputLayout.error = "Campo obligatorio"
-            valido = false
-        } else {
-            numPacienteInputLayout.error = ""
         }
         if (alturaEditText.text.toString().isEmpty()) {
             alturaInputLayout.error = "Campo obligatorio"

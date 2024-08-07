@@ -49,16 +49,16 @@
         android:contentDescription="@string/warning"
         android:src="@drawable/ic_warning"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_document"
+        app:layout_constraintEnd_toStartOf="@id/icon_recordatorio"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
 
     <ImageButton
-        android:id="@+id/icon_document"
+        android:id="@+id/icon_recordatorio"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:contentDescription="@string/detalles"
-        android:src="@drawable/ic_document"
+        android:contentDescription="@string/recordatorio"
+        android:src="@drawable/ic_recordatorio"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
