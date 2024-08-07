@@ -111,5 +111,7 @@ class PacientesActivity : AppCompatActivity() {
         private const val NOTIFICATION_ID = 1
         private const val REQUEST_CODE_POST_NOTIFICATIONS = 1001
     }
+
+
 }
 

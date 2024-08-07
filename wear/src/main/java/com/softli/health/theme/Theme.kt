@@ -1,4 +1,4 @@
-package com.softli.health.presentation.theme
+package com.softli.health.theme
 
 import androidx.compose.runtime.Composable
 import androidx.wear.compose.material.MaterialTheme

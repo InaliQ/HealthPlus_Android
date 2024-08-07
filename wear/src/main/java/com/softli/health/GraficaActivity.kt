@@ -13,6 +13,7 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.softli.health.EmergenciaActivity
@@ -63,7 +64,6 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
     }
 
     private fun sendAlertToPhone(heartRate: Int) {
-        Log.d("GraficaActivity", "Enviando alerta al teléfono: $heartRate")
         val dataMap = PutDataMapRequest.create("/heart_rate").run {
             dataMap.putInt("heart_rate", heartRate)
             asPutDataRequest()
@@ -72,16 +72,6 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
     }
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
-        for (event in dataEvents) {
-            if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = event.dataItem
-                if (dataItem.uri.path == "/count") {
-                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    counter = dataMap.getInt("count")
-                    Log.d("GraficaActivity", "Contador actualizado: $counter")
-                }
-            }
-        }
     }
 
     override fun onDestroy() {
