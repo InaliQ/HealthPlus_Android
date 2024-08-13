@@ -6,10 +6,8 @@ data class Recordatorio (
     @SerializedName("idRecordatorio") val idRecordatorio: Int,
     @SerializedName("idEnfermero") val idEnfermero: Int,
     @SerializedName("medicamento") val medicamento: String,
-    @SerializedName("cantidad_medicamento") val cantidad_medicamento: String,
-    @SerializedName("idPaciente") val idPaciente: Int,
-    @SerializedName("fecha") val fecha: String,
-    @SerializedName("fecha_inicio") val fecha_inicio: String,
-    @SerializedName("fecha_fin") val fecha_fin: String,
+    @SerializedName("cantidadMedicamento") val cantidadMedicamento: String,
+    @SerializedName("fechaInicio") val fechaInicio: String,
+    @SerializedName("fechaFin") val fechaFin: String,
     @SerializedName("estatus") val estatus: Boolean
-    )
+)

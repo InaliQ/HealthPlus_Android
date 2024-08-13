@@ -9,6 +9,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -19,16 +20,35 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
+import com.google.android.gms.wearable.Wearable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.softli.health.R
+import com.softli.health.apiservice.RecordatorioApiService
 import com.softli.health.databinding.ActivityPacientesListBinding
+import com.softli.health.models.Recordatorio
+import com.softli.health.repositories.SessionRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.time.LocalDateTime
 
-class PacientesActivity : AppCompatActivity() {
+class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListener {
     val context: Context = this
     private lateinit var binding: ActivityPacientesListBinding
+    lateinit var sessionRepository: SessionRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sessionRepository = SessionRepository(this)
 
         binding = ActivityPacientesListBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -36,9 +56,13 @@ class PacientesActivity : AppCompatActivity() {
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        // Quita el título
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         val navView: BottomNavigationView = binding.navView
 
-        val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_pacientes_list) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_pacientes_list) as NavHostFragment
         val navController = navHostFragment.findNavController()
 
         val appBarConfiguration = AppBarConfiguration(
@@ -48,10 +72,88 @@ class PacientesActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+        Wearable.getMessageClient(this).addListener(this)
 
         createNotificationChannel()
-        requestNotificationPermission()  // Solicitar permiso para mostrar notificaciones
+        startProcess()
     }
+
+    private fun loadRecordatorios() {
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://10.0.2.2:5042/api/Recordatorio/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val apiService = retrofit.create(RecordatorioApiService::class.java)
+        val call = apiService.getRecordatorio()
+
+        call.enqueue(object : Callback<List<Recordatorio>> {
+            override fun onResponse(
+                call: Call<List<Recordatorio>>,
+                response: Response<List<Recordatorio>>
+            ) {
+                if (response.isSuccessful) {
+                    sessionRepository.cleanFechasRecordatorio()
+                    val fechas = response.body()?.map { it.fechaInicio } ?: emptyList()
+                    sessionRepository.saveFechasRecordatorio(fechas)
+                } else {
+                    Log.e("RecordatorioViewModel", "Error en la respuesta: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(call: Call<List<Recordatorio>>, t: Throwable) {
+                Log.e("RecordatorioViewModel", "Error en la llamada a la API", t)
+            }
+        })
+    }
+
+    private fun startCheckingDateTime(
+        fechas: List<String>,
+        onTimeReached: () -> Unit
+    ) {
+        CoroutineScope(Dispatchers.Default).launch {
+            while (isActive) {
+                val now = LocalDateTime.now()
+
+                for (fecha in fechas) {
+                    try {
+                        val targetDateTime = LocalDateTime.parse(fecha)
+                        // Comprobar si la fecha objetivo está dentro del rango de 5 minutos
+                        if ((targetDateTime.isAfter(now) && targetDateTime.isBefore(
+                                now.plusSeconds(
+                                    30
+                                )
+                            ) || targetDateTime == now)
+                        ) {
+                            onTimeReached()
+                        }
+                    } catch (e: Exception) {
+                        Log.e("startCheckingDateTime", "Error al parsear la fecha: $fecha", e)
+                    }
+                }
+
+                // Esperar un minuto antes de volver a comprobar
+                delay(5000)
+            }
+        }
+    }
+
+    fun startProcess() {
+        // Carga los recordatorios inicialmente
+        loadRecordatorios()
+
+        // Cargar fechas desde el sessionRepository
+        val fechas = sessionRepository.getFechasRecordatorio() ?: emptyList()
+
+        // Comienza la verificación
+        startCheckingDateTime(fechas) {
+            // Aquí se ejecuta el código cuando la fecha coincide
+            Log.d("startCheckingDateTime", "¡Fecha y hora objetivo alcanzadas!")
+            enviarRecordatorio("Paracetamol 12:30 A.M.")
+            requestNotificationPermission()
+        }
+    }
+
 
     private fun requestNotificationPermission() {
         if (ActivityCompat.checkSelfPermission(
@@ -83,7 +185,8 @@ class PacientesActivity : AppCompatActivity() {
 
     private fun showNotification(title: String, message: String) {
         val intent = Intent(context, PacientesActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent =
+            PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
 
         val builder = NotificationCompat.Builder(this, CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_notification)
@@ -110,6 +213,48 @@ class PacientesActivity : AppCompatActivity() {
         private const val CHANNEL_ID = "canal_de_notificaciones"
         private const val NOTIFICATION_ID = 1
         private const val REQUEST_CODE_POST_NOTIFICATIONS = 1001
+    }
+
+    override fun onMessageReceived(messageEvent: MessageEvent) {
+        if (messageEvent.path == "/hear_rate") {
+            val message = String(messageEvent.data)
+            actualizarHeartRate(message)
+            Log.d("HearRate", "Message received: $message")
+        }
+        if (messageEvent.path == "/emergency_status") {
+            val message = String(messageEvent.data)
+            actualizarHeartRate(message)
+            Log.d("Emergencia", "Message received: $message")
+        }
+        if (messageEvent.path == "/confirmation") {
+            val message = String(messageEvent.data)
+            actualizarHeartRate(message)
+            Log.d("Recordatorio", "Message received: $message")
+        }
+    }
+
+
+    private fun actualizarHeartRate(message: String) {
+        Log.d("PacientesActivity", "Mensaje recibido: $message")
+    }
+
+    private fun enviarRecordatorio(message: String) {
+        Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            for (node in nodes) {
+                Wearable.getMessageClient(this)
+                    .sendMessage(node.id, "/hear_rate", message.toByteArray())
+                    .addOnSuccessListener {
+                        Log.d("GraficaActivity", "Message sent: $message")
+                    }.addOnFailureListener { e ->
+                        Log.e("GraficaActivity", "Failed to send message", e)
+                    }
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Wearable.getMessageClient(this).removeListener(this)
     }
 
 

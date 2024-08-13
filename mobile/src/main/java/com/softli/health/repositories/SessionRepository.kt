@@ -27,12 +27,26 @@ class SessionRepository(context: Context) {
         sharedPreferences.edit().putInt("enfermero_id", enfermero.idEnfermero).apply()
     }
 
+    fun saveFechasRecordatorio(fechas: List<String>) {
+        val json = Gson().toJson(fechas)
+        sharedPreferences.edit().putString("fechas", json).apply()
+    }
+
     fun getEnfermeroId(): Int? {
         return sharedPreferences.getInt("enfermero_id", -1)
     }
 
     fun getPacienteId(): Int? {
         return sharedPreferences.getInt("paciente_id", -1)
+    }
+
+    fun cleanFechasRecordatorio() {
+        sharedPreferences.edit().remove("fechas").apply()
+    }
+
+    fun getFechasRecordatorio(): List<String>? {
+        val json = sharedPreferences.getString("fechas", null)
+        return Gson().fromJson(json, Array<String>::class.java)?.toList()
     }
 
     fun cleanPaciente() {

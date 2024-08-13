@@ -13,14 +13,13 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.softli.health.EmergenciaActivity
 import com.softli.health.R
 
-class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
-    private var counter = 0
+class GraficaActivity : ComponentActivity() {
+
     private lateinit var imgGrafica: ImageView
     private lateinit var barraProgreso: ProgressBar
     private lateinit var txtLatidos: TextView
@@ -28,7 +27,8 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
     private val handler = Handler(Looper.getMainLooper())
     private var currentIndex = 0
     private val updateInterval = 1000L
-    private val heartRates = intArrayOf(60, 62, 63, 65, 66, 68, 69, 71, 73, 75, 76, 78, 79, 81, 83, 84, 86, 87, 89)
+    private val heartRates =
+        intArrayOf(60, 62, 63, 65, 66, 68, 69, 71, 73, 75, 76, 78, 79, 81, 83, 84, 86, 87, 89)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,8 +38,16 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         barraProgreso = findViewById(R.id.barraProgreso)
         txtLatidos = findViewById(R.id.txtLatidos)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
         handler.post(updateHeartRate)
-        Wearable.getDataClient(this).addListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(updateHeartRate)
     }
 
     private val updateHeartRate = object : Runnable {
@@ -49,9 +57,11 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                 txtLatidos.text = "Frecuencia cardíaca: $heartRate"
                 barraProgreso.progress = heartRate
 
-                // Cambiar de actividad si los latidos son 87 o más
+                // Enviar el valor del pulso cardíaco continuamente
+                sendMessageToPhone("Frecuencia cardíaca: $heartRate")
+
+                // Si los latidos son 87 o más, iniciar la actividad de emergencia
                 if (heartRate >= 87) {
-                    sendAlertToPhone(heartRate)
                     val intent = Intent(this@GraficaActivity, EmergenciaActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -63,20 +73,19 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         }
     }
 
-    private fun sendAlertToPhone(heartRate: Int) {
-        val dataMap = PutDataMapRequest.create("/heart_rate").run {
-            dataMap.putInt("heart_rate", heartRate)
-            asPutDataRequest()
+
+    private fun sendMessageToPhone(message: String) {
+        Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            for (node in nodes) {
+                Wearable.getMessageClient(this)
+                    .sendMessage(node.id, "/hear_rate", message.toByteArray())
+                    .addOnSuccessListener {
+                        Log.d("GraficaActivity", "Message sent: $message")
+                    }.addOnFailureListener { e ->
+                        Log.e("GraficaActivity", "Failed to send message", e)
+                    }
+            }
         }
-        Wearable.getDataClient(this).putDataItem(dataMap)
     }
 
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-    }
-
-    override fun onDestroy() {
-        handler.removeCallbacks(updateHeartRate)
-        Wearable.getDataClient(this).removeListener(this)
-        super.onDestroy()
-    }
 }

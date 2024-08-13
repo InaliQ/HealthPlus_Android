@@ -36,6 +36,7 @@ class RecordatorioFragment : Fragment(), DataClient.OnDataChangedListener {
         arguments?.let {
             columnCount = it.getInt(ARG_COLUMN_COUNT)
         }
+        mandarRecordatorio("Paracetamol","12:30 A.M.");
     }
 
     override fun onCreateView(
@@ -75,13 +76,21 @@ class RecordatorioFragment : Fragment(), DataClient.OnDataChangedListener {
             }
     }
 
-    private fun mandarContadorReloj() {
-        val dataMap = PutDataMapRequest.create("/count").run {
-            dataMap.putInt("count", 10)
+    private fun mandarRecordatorio(medicina: String, horaLimite: String) {
+        val dataMap = PutDataMapRequest.create("/recordatory").run {
+            dataMap.putString("medicina", medicina)
+            dataMap.putString("horaLimite", horaLimite)
             asPutDataRequest()
         }
         Wearable.getDataClient(requireContext()).putDataItem(dataMap)
+            .addOnSuccessListener {
+                Log.d("PacienteFragment", "Recordatorio enviado exitosamente")
+            }
+            .addOnFailureListener { e ->
+                Log.e("PacienteFragment", "Fallo al enviar el recordatorio", e)
+            }
     }
+
 
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         for (event in dataEvents) {
