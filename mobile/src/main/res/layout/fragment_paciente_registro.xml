@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="300dp">
 
-
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/nombreInputLayout"
             android:layout_width="0dp"
@@ -18,15 +17,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="100dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toTopOf="parent">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/nombreEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Nombre" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -38,15 +38,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/nombreInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/primerApellidoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Primer Apellido" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,15 +59,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/primerApellidoInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/segundoApellidoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Segundo Apellido" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -78,15 +80,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/segundoApellidoInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/telefonoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Teléfono" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,15 +101,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/telefonoInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/calleEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Calle" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -118,15 +122,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/calleInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/numeroEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Número" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -138,15 +143,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/numeroInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/codigoPostalEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Código Postal" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -158,15 +164,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/codigoPostalInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/coloniaEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Colonia" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -178,15 +185,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/coloniaInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/alturaEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Altura" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -198,15 +206,16 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/alturaInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/pesoEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
                 android:hint="Peso" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -218,16 +227,17 @@
             android:layout_marginStart="24dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            android:background="@drawable/rounded_edit_text"
             app:layout_constraintTop_toBottomOf="@id/pesoInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/tipoDeSangreEditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Tipo de Sangre" />
+                android:background="@drawable/rounded_edit_text"
+                android:hint="@string/tipo_de_sangre" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Botón Enviar -->
@@ -239,7 +249,7 @@
             android:layout_marginTop="24dp"
             android:layout_marginEnd="24dp"
             android:layout_marginBottom="16dp"
-            android:text="Enviar"
+            android:text="@string/enviar"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

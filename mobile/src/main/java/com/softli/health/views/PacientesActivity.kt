@@ -56,6 +56,9 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         val toolbar: Toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
 
+        // Quita el título
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
         val navView: BottomNavigationView = binding.navView
 
         val navHostFragment =
@@ -146,6 +149,7 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         startCheckingDateTime(fechas) {
             // Aquí se ejecuta el código cuando la fecha coincide
             Log.d("startCheckingDateTime", "¡Fecha y hora objetivo alcanzadas!")
+            enviarRecordatorio("Paracetamol 12:30 A.M.")
             requestNotificationPermission()
         }
     }
@@ -232,6 +236,20 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
 
     private fun actualizarHeartRate(message: String) {
         Log.d("PacientesActivity", "Mensaje recibido: $message")
+    }
+
+    private fun enviarRecordatorio(message: String) {
+        Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            for (node in nodes) {
+                Wearable.getMessageClient(this)
+                    .sendMessage(node.id, "/hear_rate", message.toByteArray())
+                    .addOnSuccessListener {
+                        Log.d("GraficaActivity", "Message sent: $message")
+                    }.addOnFailureListener { e ->
+                        Log.e("GraficaActivity", "Failed to send message", e)
+                    }
+            }
+        }
     }
 
     override fun onDestroy() {

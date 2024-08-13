@@ -10,11 +10,6 @@ import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
 import com.google.android.gms.wearable.Wearable
-import com.samsung.android.sdk.healthdata.HealthConnectionErrorResult
-import com.samsung.android.sdk.healthdata.HealthConstants
-import com.samsung.android.sdk.healthdata.HealthDataResolver
-import com.samsung.android.sdk.healthdata.HealthDataStore
-import com.softli.health.R
 
 class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
 

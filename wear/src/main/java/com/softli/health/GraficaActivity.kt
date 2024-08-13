@@ -27,7 +27,8 @@ class GraficaActivity : ComponentActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var currentIndex = 0
     private val updateInterval = 1000L
-    private val heartRates = intArrayOf(60, 62, 63, 65, 66, 68, 69, 71, 73, 75, 76, 78, 79, 81, 83, 84, 86, 87, 89)
+    private val heartRates =
+        intArrayOf(60, 62, 63, 65, 66, 68, 69, 71, 73, 75, 76, 78, 79, 81, 83, 84, 86, 87, 89)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,7 +77,8 @@ class GraficaActivity : ComponentActivity() {
     private fun sendMessageToPhone(message: String) {
         Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
             for (node in nodes) {
-                Wearable.getMessageClient(this).sendMessage(node.id, "/hear_rate", message.toByteArray())
+                Wearable.getMessageClient(this)
+                    .sendMessage(node.id, "/hear_rate", message.toByteArray())
                     .addOnSuccessListener {
                         Log.d("GraficaActivity", "Message sent: $message")
                     }.addOnFailureListener { e ->

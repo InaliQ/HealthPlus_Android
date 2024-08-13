@@ -4,13 +4,11 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.TextView
 import com.softli.health.R
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import com.softli.health.views.ui.recordatorio.placeholder.PlaceholderContent.PlaceholderItem
-import com.softli.health.databinding.FragmentRecordatorioBinding
 import com.softli.health.models.Recordatorio
 
 /**
@@ -35,7 +33,7 @@ class MyRecordatorioRecyclerViewAdapter(
         return RecordatorioViewHolder(itemView)
     }
 
-    fun formatDateTime(dateTimeString: String): String {
+    private fun formatDateTime(dateTimeString: String): String {
         val localDateTime = LocalDateTime.parse(dateTimeString)
 
         val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
@@ -47,7 +45,7 @@ class MyRecordatorioRecyclerViewAdapter(
     override fun onBindViewHolder(holder: RecordatorioViewHolder, position: Int) {
         val item = recordatorios[position]
         holder.medicamentoTextView.text = item.medicamento
-        holder.cantidadTextView.text = item.cantidad_medicamento
+        holder.cantidadTextView.text = item.cantidadMedicamento
         holder.fechaInicioTextView.text = formatDateTime(item.fechaInicio)
         holder.fechaFinTextView.text = formatDateTime(item.fechaFin)
         holder.estatusTextView.text = if (item.estatus) "Atendido" else "Sin atender"
