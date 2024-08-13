@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.softli.health.R
@@ -18,8 +19,8 @@ class MyPacienteRecyclerViewAdapter(
     class PacienteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val nombreTextView: TextView = itemView.findViewById(R.id.text_name)
         val edadTextView: TextView = itemView.findViewById(R.id.text_id)
-        val warningButton: ImageButton = itemView.findViewById(R.id.icon_warning)
-        val recordatorioButton: ImageButton = itemView.findViewById(R.id.icon_recordatorio)
+        val warningButton: ImageView = itemView.findViewById(R.id.icon_warning)
+        val recordatorioButton: ImageView = itemView.findViewById(R.id.icon_recordatorio)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PacienteViewHolder {

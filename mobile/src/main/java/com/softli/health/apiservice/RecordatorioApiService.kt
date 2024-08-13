@@ -8,4 +8,7 @@ import retrofit2.http.Path
 interface RecordatorioApiService {
     @GET("getRecordatorios/{idPaciente}")
     fun getRecordatorio(@Path("idPaciente") idPaciente: Int): Call<List<Recordatorio>>
+
+    @GET("getRecordatorios")
+    fun getRecordatorio(): Call<List<Recordatorio>>
 }

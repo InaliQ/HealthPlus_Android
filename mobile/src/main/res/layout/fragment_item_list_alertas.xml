@@ -1,13 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/listAlertas"
-    android:name="com.softli.health.views.ui.alertas.AlertasFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginLeft="16dp"
-    android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-    tools:context=".views.ui.alertas.AlertasFragment"
-    tools:listitem="@layout/fragment_item_alerta" />
+    android:orientation="vertical"
+    android:gravity="center">
+
+
+    <TextView
+        android:id="@+id/txtBienvenida"
+        style="@style/titulo1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="10dp"
+        android:text="Historial del Alertas"
+        android:textColor="@android:color/black"
+        android:textSize="35sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/listAlertas"
+        android:layout_width="360dp"
+        android:layout_height="580dp"
+        android:layout_margin="55dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context=".views.ui.alertas.AlertasFragment"
+        tools:listitem="@layout/fragment_item_alerta" />
+</LinearLayout>

@@ -2,15 +2,19 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/login">
 
     <TextView
         android:id="@+id/txtBienvenida"
         style="@style/titulo1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="100dp"
         android:text="Inicio de sesión"
+        android:textColor="@android:color/white"
+        android:textSize="50sp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -34,13 +38,17 @@
         android:layout_marginEnd="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        android:background="@drawable/rounded_edit_text"
         app:layout_constraintTop_toBottomOf="@id/imagenBienvenida">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/emailEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/usuario" />
+            android:hint="@string/usuario"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -50,6 +58,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
+        android:background="@drawable/rounded_edit_text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailInputLayout">
@@ -59,7 +68,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/contrasenia"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:textColorHint="@android:color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
@@ -69,9 +81,10 @@
         android:layout_marginStart="150dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="150dp"
+        android:background="@color/material_dynamic_neutral0"
         android:text="@string/enviar"
+        android:textColor="@android:color/white"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/contrasenaInputLayout" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -18,8 +18,8 @@ import com.google.android.gms.wearable.Wearable
 import com.softli.health.EmergenciaActivity
 import com.softli.health.R
 
-class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
-    private var counter = 0
+class GraficaActivity : ComponentActivity() {
+
     private lateinit var imgGrafica: ImageView
     private lateinit var barraProgreso: ProgressBar
     private lateinit var txtLatidos: TextView
@@ -37,8 +37,16 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         barraProgreso = findViewById(R.id.barraProgreso)
         txtLatidos = findViewById(R.id.txtLatidos)
 
+    }
+
+    override fun onResume() {
+        super.onResume()
         handler.post(updateHeartRate)
-        Wearable.getDataClient(this).addListener(this)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        handler.removeCallbacks(updateHeartRate)
     }
 
     private val updateHeartRate = object : Runnable {
@@ -48,9 +56,11 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
                 txtLatidos.text = "Frecuencia cardíaca: $heartRate"
                 barraProgreso.progress = heartRate
 
-                // Cambiar de actividad si los latidos son 87 o más
+                // Enviar el valor del pulso cardíaco continuamente
+                sendMessageToPhone("Frecuencia cardíaca: $heartRate")
+
+                // Si los latidos son 87 o más, iniciar la actividad de emergencia
                 if (heartRate >= 87) {
-                    sendAlertToPhone(heartRate)
                     val intent = Intent(this@GraficaActivity, EmergenciaActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -62,31 +72,18 @@ class GraficaActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         }
     }
 
-    private fun sendAlertToPhone(heartRate: Int) {
-        Log.d("GraficaActivity", "Enviando alerta al teléfono: $heartRate")
-        val dataMap = PutDataMapRequest.create("/heart_rate").run {
-            dataMap.putInt("heart_rate", heartRate)
-            asPutDataRequest()
-        }
-        Wearable.getDataClient(this).putDataItem(dataMap)
-    }
 
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        for (event in dataEvents) {
-            if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = event.dataItem
-                if (dataItem.uri.path == "/count") {
-                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    counter = dataMap.getInt("count")
-                    Log.d("GraficaActivity", "Contador actualizado: $counter")
-                }
+    private fun sendMessageToPhone(message: String) {
+        Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
+            for (node in nodes) {
+                Wearable.getMessageClient(this).sendMessage(node.id, "/hear_rate", message.toByteArray())
+                    .addOnSuccessListener {
+                        Log.d("GraficaActivity", "Message sent: $message")
+                    }.addOnFailureListener { e ->
+                        Log.e("GraficaActivity", "Failed to send message", e)
+                    }
             }
         }
     }
 
-    override fun onDestroy() {
-        handler.removeCallbacks(updateHeartRate)
-        Wearable.getDataClient(this).removeListener(this)
-        super.onDestroy()
-    }
 }

@@ -5,16 +5,16 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/rounded_corners_background"
-    android:padding="8dp">
+    android:padding="8dp"
+    android:background="@drawable/rounded_corners_background">
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/icon_avatar"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/avatar"
-        android:src="@drawable/ic_person"
+        android:src="@drawable/user"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -22,36 +22,36 @@
 
     <TextView
         android:id="@+id/text_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
         android:text="@string/guionbajo"
+        android:textColor="@android:color/white"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@id/icon_avatar"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/text_id"
-        app:layout_constraintEnd_toStartOf="@id/icon_warning" />
+        app:layout_constraintEnd_toStartOf="@id/icon_warning"
+        app:layout_constraintStart_toEndOf="@id/icon_avatar"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/text_id"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_width="170dp"
+        android:layout_height="20dp"
         android:text="@string/guionbajo"
-        app:layout_constraintStart_toEndOf="@id/icon_avatar"
-        app:layout_constraintTop_toBottomOf="@id/text_name"
+        android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_warning" />
+        app:layout_constraintEnd_toStartOf="@id/icon_warning"
+        app:layout_constraintStart_toEndOf="@id/icon_avatar"
+        app:layout_constraintTop_toBottomOf="@id/text_name" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/icon_warning"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginEnd="8dp"
-        android:contentDescription="@string/warning"
-        android:src="@drawable/ic_warning"
+        android:layout_width="40dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/exclamation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="TouchTargetSizeCheck" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
