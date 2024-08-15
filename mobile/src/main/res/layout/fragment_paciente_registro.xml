@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="16dp">
@@ -132,7 +133,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_edit_text"
-                android:hint="Número" />
+                android:hint="Número"
+                tools:ignore="HardcodedText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Código Postal -->
@@ -240,6 +242,50 @@
                 android:hint="@string/tipo_de_sangre" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Ritmo Mínimo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ritmoMinInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tipoDeSangreInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ritmoMinEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="Ritmo Mínimo"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Ritmo Máximo -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/ritmoMaxInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ritmoMinInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/ritmoMaxEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="Ritmo Máximo"
+                tools:ignore="HardcodedText" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Botón Enviar -->
         <Button
             android:id="@+id/registrarButton"
@@ -253,6 +299,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tipoDeSangreInputLayout" />
+            app:layout_constraintTop_toBottomOf="@id/ritmoMaxInputLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

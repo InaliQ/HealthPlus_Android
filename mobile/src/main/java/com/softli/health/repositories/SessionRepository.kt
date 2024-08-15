@@ -2,8 +2,10 @@ package com.softli.health.repositories
 
 import android.content.Context
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.softli.health.models.Enfermero
 import com.softli.health.models.Paciente
+import com.softli.health.models.Recordatorio
 import com.softli.health.models.UsuarioModel
 
 class SessionRepository(context: Context) {
@@ -27,9 +29,19 @@ class SessionRepository(context: Context) {
         sharedPreferences.edit().putInt("enfermero_id", enfermero.idEnfermero).apply()
     }
 
-    fun saveFechasRecordatorio(fechas: List<String>) {
-        val json = Gson().toJson(fechas)
-        sharedPreferences.edit().putString("fechas", json).apply()
+    fun saveRecordatorios(recordatorios: List<Recordatorio>) {
+        val json = Gson().toJson(recordatorios)
+        sharedPreferences.edit().putString("recordatorios", json).apply()
+    }
+
+    fun getRecordatorios(): List<Recordatorio>? {
+        val json = sharedPreferences.getString("recordatorios", null)
+        val type = object : TypeToken<List<Recordatorio>>() {}.type
+        return Gson().fromJson(json, type)
+    }
+
+    fun cleanRecordatorios() {
+        sharedPreferences.edit().remove("recordatorios").apply()
     }
 
     fun getEnfermeroId(): Int? {
@@ -38,15 +50,6 @@ class SessionRepository(context: Context) {
 
     fun getPacienteId(): Int? {
         return sharedPreferences.getInt("paciente_id", -1)
-    }
-
-    fun cleanFechasRecordatorio() {
-        sharedPreferences.edit().remove("fechas").apply()
-    }
-
-    fun getFechasRecordatorio(): List<String>? {
-        val json = sharedPreferences.getString("fechas", null)
-        return Gson().fromJson(json, Array<String>::class.java)?.toList()
     }
 
     fun cleanPaciente() {

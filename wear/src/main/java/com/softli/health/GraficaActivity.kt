@@ -13,12 +13,14 @@ import com.google.android.gms.wearable.DataClient
 import com.google.android.gms.wearable.DataEvent
 import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.DataMapItem
+import com.google.android.gms.wearable.MessageClient
+import com.google.android.gms.wearable.MessageEvent
 import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.softli.health.EmergenciaActivity
 import com.softli.health.R
 
-class GraficaActivity : ComponentActivity() {
+class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener {
 
     private lateinit var imgGrafica: ImageView
     private lateinit var barraProgreso: ProgressBar
@@ -70,6 +72,13 @@ class GraficaActivity : ComponentActivity() {
                     handler.postDelayed(this, updateInterval)
                 }
             }
+        }
+    }
+
+    override fun onMessageReceived(messageEvent: MessageEvent) {
+        if (messageEvent.path == "/recordatory") {
+            val message = String(messageEvent.data)
+            Log.d("Recordatory", "Message received: $message")
         }
     }
 
