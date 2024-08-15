@@ -45,7 +45,6 @@ class PacienteFragment : Fragment(), DataClient.OnDataChangedListener {
 
         recyclerView = view.findViewById(R.id.recyclerViewPacientes)
         if (recyclerView == null) {
-            Log.e("PacienteFragment", "RecyclerView no encontrado. Asegúrate de que el ID es correcto en el XML.")
         } else {
             sessionManager = SessionManager(requireContext())
             recyclerView.layoutManager = LinearLayoutManager(context)

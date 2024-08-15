@@ -11,6 +11,7 @@ class SessionManager(context: Context) {
         val json = Gson().toJson(user)
         sharedPreferences.edit().putString("user", json).apply()
         sharedPreferences.edit().putInt("user_id", user.idUsuario).apply()
+        sharedPreferences.edit().putInt("enfermero_id", user.enfermero.idEnfermero).apply()
     }
     fun savePaciente(paciente: Paciente) {
         val json = Gson().toJson(paciente)
@@ -25,8 +26,11 @@ class SessionManager(context: Context) {
         val json = sharedPreferences.getString("user", null)
         return Gson().fromJson(json, UsuarioModel::class.java)
     }
-    fun getUserId(): String? {
-        return sharedPreferences.getString("user_id", null)
+    fun getUserId(): Int? {
+        return sharedPreferences.getInt("user_id", -1)
+    }
+    fun getEnfermeroId(): Int? {
+        return sharedPreferences.getInt("enfermero_id", -1)
     }
     fun clearSession() {
         sharedPreferences.edit().clear().apply()

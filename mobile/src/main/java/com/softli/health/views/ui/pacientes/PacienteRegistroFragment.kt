@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputLayout
 import com.softli.health.R
 import com.softli.health.apiservice.PacienteApiService
 import com.softli.health.apiservice.RetrofitClientPaciente
+import com.softli.health.config.SessionManager
 import com.softli.health.models.Paciente
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -25,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class PacienteRegistroFragment : Fragment() {
+    lateinit var sessionManager: SessionManager
     lateinit var nombreInputLayout: TextInputLayout
     lateinit var nombreEditText: TextInputEditText
     lateinit var primerApellidoInputLayout: TextInputLayout
@@ -47,11 +49,19 @@ class PacienteRegistroFragment : Fragment() {
     lateinit var pesoEditText: TextInputEditText
     lateinit var tipoDeSangreInputLayout: TextInputLayout
     lateinit var tipoDeSangreEditText: TextInputEditText
+    lateinit var ritmoMinInputLayout: TextInputLayout
+    lateinit var ritmoMinEditText: TextInputEditText
+    lateinit var ritmoMaxInputLayout: TextInputLayout
+    lateinit var ritmoMaxEditText: TextInputEditText
     lateinit var contexto: Context
+    var userId: Int? = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         contexto = requireContext()
+        sessionManager = SessionManager(contexto)
+        userId = sessionManager.getEnfermeroId()
+        Log.d("PacienteRegistroFragment", "userId: $userId")
     }
 
     override fun onCreateView(
@@ -86,6 +96,10 @@ class PacienteRegistroFragment : Fragment() {
         pesoEditText = view.findViewById(R.id.pesoEditText)
         tipoDeSangreInputLayout = view.findViewById(R.id.tipoDeSangreInputLayout)
         tipoDeSangreEditText = view.findViewById(R.id.tipoDeSangreEditText)
+        ritmoMinInputLayout = view.findViewById(R.id.ritmoMinInputLayout)
+        ritmoMinEditText = view.findViewById(R.id.ritmoMinEditText)
+        ritmoMaxInputLayout = view.findViewById(R.id.ritmoMaxInputLayout)
+        ritmoMaxEditText = view.findViewById(R.id.ritmoMaxEditText)
 
         val registrarButton = view.findViewById<Button>(R.id.registrarButton)
         registrarButton.setOnClickListener {
@@ -96,6 +110,8 @@ class PacienteRegistroFragment : Fragment() {
                     alturaEditText.text.toString(),
                     pesoEditText.text.toString(),
                     tipoDeSangreEditText.text.toString(),
+                    ritmoMinEditText.text.toString(),
+                    ritmoMaxEditText.text.toString(),
                     true,
                     0,
                     nombreEditText.text.toString(),
@@ -105,7 +121,8 @@ class PacienteRegistroFragment : Fragment() {
                     calleEditText.text.toString(),
                     numeroEditText.text.toString(),
                     codigoPostalEditText.text.toString(),
-                    coloniaEditText.text.toString()
+                    coloniaEditText.text.toString(),
+                    userId!!
                 )
                 registro(paciente)
             } else {
@@ -161,6 +178,8 @@ class PacienteRegistroFragment : Fragment() {
         alturaEditText.text?.clear()
         pesoEditText.text?.clear()
         tipoDeSangreEditText.text?.clear()
+        ritmoMinEditText.text?.clear()
+        ritmoMaxEditText.text?.clear()
     }
 
     fun formularioValido(): Boolean {
@@ -231,7 +250,18 @@ class PacienteRegistroFragment : Fragment() {
         } else {
             tipoDeSangreInputLayout.error = ""
         }
+        if (ritmoMinEditText.text.toString().isEmpty()) {
+            ritmoMinInputLayout.error = "Campo obligatorio"
+            valido = false
+        } else {
+            ritmoMinInputLayout.error = ""
+        }
+        if (ritmoMaxEditText.text.toString().isEmpty()) {
+            ritmoMaxInputLayout.error = "Campo obligatorio"
+            valido = false
+        } else {
+            ritmoMaxInputLayout.error = ""
+        }
         return valido
     }
-
 }

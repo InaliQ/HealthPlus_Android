@@ -8,6 +8,8 @@ data class Paciente (
     @SerializedName("altura") val altura: String,
     @SerializedName("peso") val peso: String,
     @SerializedName("tipoSangre") val tipoSangre: String,
+    @SerializedName("ritmoMin") val ritmoMin: String,
+    @SerializedName("ritmoMax") val ritmoMax: String,
     @SerializedName("estatus") val estatus: Boolean,
     @SerializedName("idPersona") val idPersona: Int,
     @SerializedName("nombre") val nombre: String,
@@ -17,5 +19,6 @@ data class Paciente (
     @SerializedName("calle") val calle: String,
     @SerializedName("numero") val numero: String,
     @SerializedName("codigoPostal") val codigoPostal: String,
-    @SerializedName("colonia") val colonia: String
+    @SerializedName("colonia") val colonia: String,
+    @SerializedName("idEnfermero") val idEnfermero: Int
 )

@@ -4,12 +4,12 @@ import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
@@ -26,6 +26,7 @@ import com.google.android.gms.wearable.Wearable
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.softli.health.R
 import com.softli.health.apiservice.RecordatorioApiService
+import com.softli.health.apiservice.RetrofitClient
 import com.softli.health.databinding.ActivityPacientesListBinding
 import com.softli.health.models.Recordatorio
 import com.softli.health.repositories.SessionRepository
@@ -45,6 +46,7 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
     val context: Context = this
     private lateinit var binding: ActivityPacientesListBinding
     lateinit var sessionRepository: SessionRepository
+    var recordatorio: Recordatorio? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,9 +95,9 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
                 response: Response<List<Recordatorio>>
             ) {
                 if (response.isSuccessful) {
-                    sessionRepository.cleanFechasRecordatorio()
-                    val fechas = response.body()?.map { it.fechaInicio } ?: emptyList()
-                    sessionRepository.saveFechasRecordatorio(fechas)
+                    sessionRepository.cleanRecordatorios()
+                    val recordatorios = response.body() ?: emptyList()
+                    sessionRepository.saveRecordatorios(recordatorios)
                 } else {
                     Log.e("RecordatorioViewModel", "Error en la respuesta: ${response.code()}")
                 }
@@ -107,33 +109,60 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         })
     }
 
+    private fun aceptarRecordatorio(idRecordatorio: Int) {
+        RetrofitClient.instanceRecordatorio.cambiarEstatus(idRecordatorio)
+            .enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    if (response.isSuccessful) {
+                        Toast.makeText(applicationContext, response.body(), Toast.LENGTH_SHORT)
+                            .show()
+                    } else {
+                        Toast.makeText(
+                            applicationContext,
+                            "Error: ${response.message()}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Toast.makeText(applicationContext, "Error: ${t.message}", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            })
+    }
+
     private fun startCheckingDateTime(
-        fechas: List<String>,
-        onTimeReached: () -> Unit
+        recordatorios: List<Recordatorio>,
+        onTimeReached: (Recordatorio) -> Unit
     ) {
         CoroutineScope(Dispatchers.Default).launch {
             while (isActive) {
                 val now = LocalDateTime.now()
 
-                for (fecha in fechas) {
+                for (recordatorio in recordatorios) {
                     try {
-                        val targetDateTime = LocalDateTime.parse(fecha)
+                        val targetDateTime = LocalDateTime.parse(recordatorio.fechaInicio)
+                        Log.d("startCheckingDateTime", "Fecha objetivo: $targetDateTime")
                         // Comprobar si la fecha objetivo está dentro del rango de 5 minutos
-                        if ((targetDateTime.isAfter(now) && targetDateTime.isBefore(
-                                now.plusSeconds(
-                                    30
-                                )
-                            ) || targetDateTime == now)
-                        ) {
-                            onTimeReached()
+                        if (targetDateTime.isBefore(now.plusMinutes(5))) {
+                            Log.d(
+                                "startCheckingDateTime",
+                                "¡Fecha y hora objetivo alcanzadas para ${recordatorio.medicamento}!"
+                            )
+                            onTimeReached(recordatorio)
                         }
                     } catch (e: Exception) {
-                        Log.e("startCheckingDateTime", "Error al parsear la fecha: $fecha", e)
+                        Log.e(
+                            "startCheckingDateTime",
+                            "Error al parsear la fecha: ${recordatorio.fechaInicio}",
+                            e
+                        )
                     }
                 }
 
-                // Esperar un minuto antes de volver a comprobar
-                delay(5000)
+                // Esperar 5 segundos antes de volver a comprobar
+                delay(60000)
             }
         }
     }
@@ -142,20 +171,17 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         // Carga los recordatorios inicialmente
         loadRecordatorios()
 
-        // Cargar fechas desde el sessionRepository
-        val fechas = sessionRepository.getFechasRecordatorio() ?: emptyList()
+        // Cargar recordatorios desde el sessionRepository
+        val recordatorios = sessionRepository.getRecordatorios() ?: emptyList()
 
         // Comienza la verificación
-        startCheckingDateTime(fechas) {
-            // Aquí se ejecuta el código cuando la fecha coincide
-            Log.d("startCheckingDateTime", "¡Fecha y hora objetivo alcanzadas!")
-            enviarRecordatorio("Paracetamol 12:30 A.M.")
-            requestNotificationPermission()
+        startCheckingDateTime(recordatorios) { recordatorio ->
+            enviarRecordatorio("${recordatorio.medicamento} a las ${recordatorio.fechaInicio} con id:${recordatorio.idRecordatorio}")
+            requestNotificationPermission("Recordatorio de medicamento ${recordatorio.medicamento}","${recordatorio.medicamento} a las ${recordatorio.fechaInicio}")
         }
     }
 
-
-    private fun requestNotificationPermission() {
+    private fun requestNotificationPermission(title: String, message: String) {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.POST_NOTIFICATIONS
@@ -167,7 +193,7 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
                 REQUEST_CODE_POST_NOTIFICATIONS
             )
         } else {
-            showNotification("Título de la Notificación", "Mensaje de la Notificación")
+            showNotification(title, message)
         }
     }
 
@@ -228,8 +254,7 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         }
         if (messageEvent.path == "/confirmation") {
             val message = String(messageEvent.data)
-            actualizarHeartRate(message)
-            Log.d("Recordatorio", "Message received: $message")
+            aceptarRecordatorio(Integer.parseInt(message))
         }
     }
 
@@ -239,10 +264,11 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
     }
 
     private fun enviarRecordatorio(message: String) {
+        Log.d("RecordatorioEnviar", "Mensaje enviado: $message")
         Wearable.getNodeClient(this).connectedNodes.addOnSuccessListener { nodes ->
             for (node in nodes) {
                 Wearable.getMessageClient(this)
-                    .sendMessage(node.id, "/hear_rate", message.toByteArray())
+                    .sendMessage(node.id, "/recordatory", message.toByteArray())
                     .addOnSuccessListener {
                         Log.d("GraficaActivity", "Message sent: $message")
                     }.addOnFailureListener { e ->
@@ -256,7 +282,5 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         super.onDestroy()
         Wearable.getMessageClient(this).removeListener(this)
     }
-
-
 }
 

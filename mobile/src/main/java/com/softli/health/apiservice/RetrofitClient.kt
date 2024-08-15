@@ -12,4 +12,13 @@ object RetrofitClient {
             .build()
         retrofit.create(AuthApiService::class.java)
     }
+
+    val instanceRecordatorio: RecordatorioApiService by lazy {
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        retrofit.create(RecordatorioApiService::class.java)
+    }
 }
