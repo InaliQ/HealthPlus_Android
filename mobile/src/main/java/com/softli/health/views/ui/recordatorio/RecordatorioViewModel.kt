@@ -51,6 +51,6 @@ class RecordatorioViewModel(application: Application) : AndroidViewModel(applica
     }
 
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:5042/api/Recordatorio/"
+        private const val BASE_URL = "http://10.0.2.2:5203/api/Recordatorio/"
     }
 }

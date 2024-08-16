@@ -15,6 +15,7 @@ data class Paciente (
     @SerializedName("nombre") val nombre: String,
     @SerializedName("primerApellido") val primerApellido: String,
     @SerializedName("segundoApellido") val segundoApellido: String,
+    @SerializedName("fechaNacimiento") val fechaNacimiento: String,
     @SerializedName("telefono") val telefono: String,
     @SerializedName("calle") val calle: String,
     @SerializedName("numero") val numero: String,

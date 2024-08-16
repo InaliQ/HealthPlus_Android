@@ -56,6 +56,6 @@ class AlertasViewModel(application: Application) : AndroidViewModel(application)
     }
 
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:5042/api/Alerta/"
+        private const val BASE_URL = "http://10.0.2.2:5203/api/Alerta/"
     }
 }

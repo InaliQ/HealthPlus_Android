@@ -40,6 +40,7 @@ class PacientesViewModel(application: Application) : AndroidViewModel(applicatio
             override fun onResponse(call: Call<List<Paciente>>, response: Response<List<Paciente>>) {
                 if (response.isSuccessful) {
                     _pacientes.value = response.body()
+                    Log.d("PacientesViewModel", "Pacientes cargados correctamente: ${response.body()}")
                 } else {
                     Log.e("PacientesViewModel", "Error en la respuesta: ${response.code()}")
                 }
@@ -52,6 +53,6 @@ class PacientesViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     companion object {
-        private const val BASE_URL = "http://10.0.2.2:5042/api/Paciente/"
+        private const val BASE_URL = "http://10.0.2.2:5203/api/Paciente/"
     }
 }

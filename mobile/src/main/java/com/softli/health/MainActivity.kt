@@ -61,9 +61,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 
     fun login(usuario: String, contrasenia: String) {
         Toast.makeText(this, "Iniciando sesión...", Toast.LENGTH_SHORT).show()
-//        val intent = Intent(this@MainActivity, PacientesActivity::class.java)
-//        startActivity(intent)
-//        finish()
         RetrofitClient.instance.postLogin(usuario, contrasenia).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
