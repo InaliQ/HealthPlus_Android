@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@drawable/rounded_corners_background"
+    android:background="@drawable/rounded_input_layout"
     android:padding="8dp">
 
     <TextView
@@ -114,13 +114,13 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_chainStyle="spread" />
 
-    <ImageButton
+    <ImageView
         android:id="@+id/icon_warning"
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginEnd="8dp"
         android:contentDescription="@string/warning"
-        android:src="@drawable/ic_warning"
+        android:src="@drawable/exclamation"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"

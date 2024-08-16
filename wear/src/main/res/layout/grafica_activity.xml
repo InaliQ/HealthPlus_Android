@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.GraficaActivity">
+    tools:context=".GraficaActivity">
 
     <ImageView
         android:id="@+id/imgGrafica"
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical"
         android:indeterminate="false"
-        android:max="100"
+        android:max="150"
         android:progressDrawable="@drawable/custom_progressbar" />
 
     <TextView

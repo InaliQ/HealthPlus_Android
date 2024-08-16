@@ -28,6 +28,7 @@ import com.softli.health.R
 import com.softli.health.apiservice.RecordatorioApiService
 import com.softli.health.apiservice.RetrofitClient
 import com.softli.health.databinding.ActivityPacientesListBinding
+import com.softli.health.models.MonitoreoSalud
 import com.softli.health.models.Recordatorio
 import com.softli.health.repositories.SessionRepository
 import kotlinx.coroutines.CoroutineScope
@@ -82,7 +83,7 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
 
     private fun loadRecordatorios() {
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:5042/api/Recordatorio/")
+            .baseUrl("http://10.0.2.2:5203/api/Recordatorio/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
@@ -132,6 +133,23 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
             })
     }
 
+    private fun enviarRitmoCardiaco(monitoreo: MonitoreoSalud) {
+        RetrofitClient.instanceMonitore.registrarMonitoreoSalud(monitoreo)
+            .enqueue(object : Callback<String> {
+                override fun onResponse(call: Call<String>, response: Response<String>) {
+                    if (response.isSuccessful) {
+                        Log.d("MonitoreoSalud", "Monitoreo guardado exitosamente")
+                    } else {
+                        Log.e("MonitoreoSalud", "Error al guardar el monitoreo: ${response.message()}")
+                    }
+                }
+
+                override fun onFailure(call: Call<String>, t: Throwable) {
+                    Log.e("MonitoreoSalud", "Error al guardar el monitoreo", t)
+                }
+            })
+    }
+
     private fun startCheckingDateTime(
         recordatorios: List<Recordatorio>,
         onTimeReached: (Recordatorio) -> Unit
@@ -177,7 +195,10 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
         // Comienza la verificación
         startCheckingDateTime(recordatorios) { recordatorio ->
             enviarRecordatorio("${recordatorio.medicamento} a las ${recordatorio.fechaInicio} con id:${recordatorio.idRecordatorio}")
-            requestNotificationPermission("Recordatorio de medicamento ${recordatorio.medicamento}","${recordatorio.medicamento} a las ${recordatorio.fechaInicio}")
+            requestNotificationPermission(
+                "Recordatorio de medicamento ${recordatorio.medicamento}",
+                "${recordatorio.medicamento} a las ${recordatorio.fechaInicio}"
+            )
         }
     }
 
@@ -242,21 +263,40 @@ class PacientesActivity : AppCompatActivity(), MessageClient.OnMessageReceivedLi
     }
 
     override fun onMessageReceived(messageEvent: MessageEvent) {
-        if (messageEvent.path == "/hear_rate") {
-            val message = String(messageEvent.data)
-            actualizarHeartRate(message)
-            Log.d("HearRate", "Message received: $message")
-        }
-        if (messageEvent.path == "/emergency_status") {
-            val message = String(messageEvent.data)
-            actualizarHeartRate(message)
-            Log.d("Emergencia", "Message received: $message")
-        }
-        if (messageEvent.path == "/confirmation") {
-            val message = String(messageEvent.data)
-            aceptarRecordatorio(Integer.parseInt(message))
+        // Lanza una corrutina en el contexto adecuado
+        CoroutineScope(Dispatchers.IO).launch {
+            if (messageEvent.path == "/hear_rate") {
+                while (true) {  // Esto asegura que el código se ejecute cada minuto
+                    val message = String(messageEvent.data)
+                    val soloNumero: String = message.substringAfter("Frecuencia cardíaca: ")
+                    val monitoreo: MonitoreoSalud = MonitoreoSalud(
+                        0,
+                        sessionRepository.getPacienteId()!!,
+                        LocalDateTime.now().toString(),
+                        soloNumero.toInt(),
+                        "Ritmo Cardiaco"
+                    )
+                    enviarRitmoCardiaco(monitoreo)
+                    Log.d("HearRate", "Message received: $message")
+
+                    // Retrasa la ejecución por 1 minuto
+                    delay(60000)
+                }
+            }
+            if (messageEvent.path == "/emergency_status") {
+                val message = String(messageEvent.data)
+                requestNotificationPermission(
+                    "Emergencia pendiente",
+                    "El paciente necesita esta sufriendo una emergencia"
+                )
+            }
+            if (messageEvent.path == "/confirmation") {
+                val message = String(messageEvent.data)
+                aceptarRecordatorio(Integer.parseInt(message))
+            }
         }
     }
+
 
 
     private fun actualizarHeartRate(message: String) {

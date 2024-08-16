@@ -33,6 +33,8 @@ class PacienteRegistroFragment : Fragment() {
     lateinit var primerApellidoEditText: TextInputEditText
     lateinit var segundoApellidoInputLayout: TextInputLayout
     lateinit var segundoApellidoEditText: TextInputEditText
+    lateinit var fechaNacimientoInputLayout: TextInputLayout
+    lateinit var fechaNacimientoEditText: TextInputEditText
     lateinit var telefonoInputLayout: TextInputLayout
     lateinit var telefonoEditText: TextInputEditText
     lateinit var calleInputLayout: TextInputLayout
@@ -80,6 +82,8 @@ class PacienteRegistroFragment : Fragment() {
         primerApellidoEditText = view.findViewById(R.id.primerApellidoEditText)
         segundoApellidoInputLayout = view.findViewById(R.id.segundoApellidoInputLayout)
         segundoApellidoEditText = view.findViewById(R.id.segundoApellidoEditText)
+        fechaNacimientoInputLayout = view.findViewById(R.id.fechaNacimientoInputLayout)
+        fechaNacimientoEditText = view.findViewById(R.id.fechaNacimientoEditText)
         telefonoInputLayout = view.findViewById(R.id.telefonoInputLayout)
         telefonoEditText = view.findViewById(R.id.telefonoEditText)
         calleInputLayout = view.findViewById(R.id.calleInputLayout)
@@ -117,6 +121,7 @@ class PacienteRegistroFragment : Fragment() {
                     nombreEditText.text.toString(),
                     primerApellidoEditText.text.toString(),
                     segundoApellidoEditText.text.toString(),
+                    fechaNacimientoEditText.text.toString(),
                     telefonoEditText.text.toString(),
                     calleEditText.text.toString(),
                     numeroEditText.text.toString(),
@@ -132,6 +137,7 @@ class PacienteRegistroFragment : Fragment() {
     }
 
     fun registro(paciente: Paciente) {
+        Log.d("PacienteApiService", "Realizando registro del paciente: ${paciente.fechaNacimiento}")
         RetrofitClientPaciente.instance.agregarPaciente(paciente)
             .enqueue(object : Callback<ResponseBody> {
                 override fun onResponse(
@@ -149,7 +155,11 @@ class PacienteRegistroFragment : Fragment() {
                 }
 
                 override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                    Toast.makeText(contexto, "Error al registrar paciente: ${t.message}", Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        contexto,
+                        "Error al registrar paciente: ${t.message}",
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 }
             })
@@ -170,6 +180,7 @@ class PacienteRegistroFragment : Fragment() {
         nombreEditText.text?.clear()
         primerApellidoEditText.text?.clear()
         segundoApellidoEditText.text?.clear()
+        fechaNacimientoEditText.text?.clear()
         telefonoEditText.text?.clear()
         calleEditText.text?.clear()
         numeroEditText.text?.clear()
@@ -201,6 +212,12 @@ class PacienteRegistroFragment : Fragment() {
             valido = false
         } else {
             segundoApellidoInputLayout.error = ""
+        }
+        if (fechaNacimientoEditText.text.toString().isEmpty()) {
+            fechaNacimientoInputLayout.error = "Campo obligatorio"
+            valido = false
+        } else {
+            fechaNacimientoInputLayout.error = ""
         }
         if (telefonoEditText.text.toString().isEmpty()) {
             telefonoInputLayout.error = "Campo obligatorio"

@@ -73,6 +73,27 @@
                 android:hint="Segundo Apellido" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/fechaNacimientoInputLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/rounded_input_layout"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/segundoApellidoInputLayout">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/fechaNacimientoEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:background="@drawable/rounded_edit_text"
+                android:hint="Fecha de Nacimiento" />
+        </com.google.android.material.textfield.TextInputLayout>
+
         <!-- Teléfono -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/telefonoInputLayout"
@@ -84,7 +105,7 @@
             android:background="@drawable/rounded_input_layout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/segundoApellidoInputLayout">
+            app:layout_constraintTop_toBottomOf="@id/fechaNacimientoInputLayout">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/telefonoEditText"
