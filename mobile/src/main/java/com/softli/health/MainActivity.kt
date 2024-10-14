@@ -18,8 +18,6 @@ import com.google.gson.Gson
 import com.softli.health.apiservice.RetrofitClient
 import com.softli.health.config.SessionManager
 import com.softli.health.models.UsuarioModel
-import com.softli.health.repositories.SessionRepository
-import com.softli.health.views.PacientesActivity
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,7 +30,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
     lateinit var contrasenaInputLayout: TextInputLayout
     lateinit var contrasenaInput: TextInputEditText
     lateinit var sessionManager: SessionManager
-    lateinit var sessionRepository: SessionRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +37,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
         Wearable.getDataClient(this).addListener(this)
         contexto = this
         sessionManager = SessionManager(this)
-        sessionRepository = SessionRepository(this)
         contrasenaInputLayout = findViewById<TextInputLayout>(R.id.contrasenaInputLayout)
         contrasenaInput = findViewById<TextInputEditText>(R.id.contrasenaEditText)
         emailInputLayout = findViewById<TextInputLayout>(R.id.emailInputLayout)
@@ -68,10 +64,8 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
                     val gson = Gson()
                     val usuario = gson.fromJson(stringJson, UsuarioModel::class.java)
                     sessionManager.saveUser(usuario)
-                    sessionRepository.saveEnfermero(usuario.enfermero)
                     Toast.makeText(contexto, "Bienvenido ${usuario.nombre}", Toast.LENGTH_SHORT)
                         .show()
-                    val intent = Intent(this@MainActivity, PacientesActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

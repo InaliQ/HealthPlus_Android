@@ -11,6 +11,7 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 
 class RecordatorioActivity : ComponentActivity() {
+
     private var idRecordatorio: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -50,3 +51,4 @@ class RecordatorioActivity : ComponentActivity() {
         }
     }
 }
+

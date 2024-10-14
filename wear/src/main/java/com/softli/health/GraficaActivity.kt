@@ -100,7 +100,6 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
         } else {
             currentIndex++
         }
-
     }
 
 

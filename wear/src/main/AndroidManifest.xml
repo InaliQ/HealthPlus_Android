@@ -37,6 +37,7 @@
         </activity>
         <activity android:name=".GraficaActivity" />
         <activity android:name=".EmergenciaActivity" />
+        <activity android:name=".RecordatorioActivity"/>
     </application>
 
 </manifest>

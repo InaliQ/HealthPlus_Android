@@ -3,11 +3,18 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.BODY_SENSORS" />
     <uses-permission android:name="com.google.android.permission.PROVIDE_BACKGROUND" />
     <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-
 
     <application
         android:allowBackup="true"
@@ -20,6 +27,30 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Health"
         tools:targetApi="31">
+        <activity
+            android:name=".InicioActivity"
+            android:banner="@drawable/app_icon_your_company"
+            android:exported="false"
+            android:icon="@drawable/app_icon_your_company"
+            android:label="@string/title_activity_inicio"
+            android:logo="@drawable/app_icon_your_company"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Health">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".DetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PlaybackActivity"
+            android:exported="false" />
+        <activity
+            android:name=".BrowseErrorActivity"
+            android:exported="false" />
         <activity android:name=".views.PacientesActivity" />
         <activity
             android:name=".MainActivity"

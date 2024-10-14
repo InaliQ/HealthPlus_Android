@@ -2,7 +2,6 @@ package com.softli.health.config
 
 import android.content.Context
 import com.google.gson.Gson
-import com.softli.health.models.Paciente
 import com.softli.health.models.UsuarioModel
 
 class SessionManager(context: Context) {
