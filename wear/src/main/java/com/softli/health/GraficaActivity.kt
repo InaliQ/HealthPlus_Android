@@ -10,6 +10,7 @@ import android.hardware.SensorManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.preference.PreferenceManager
 import android.util.Log
 import android.widget.ImageView
 import android.widget.ProgressBar
@@ -29,6 +30,8 @@ import com.google.android.gms.wearable.PutDataMapRequest
 import com.google.android.gms.wearable.Wearable
 import com.softli.health.EmergenciaActivity
 import com.softli.health.R
+import org.json.JSONException
+import org.json.JSONObject
 
 class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedListener, SensorEventListener {
 
@@ -37,6 +40,7 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
     private lateinit var txtLatidos: TextView
     private lateinit var sensorManager: SensorManager
     private var heartRateSensor: Sensor? = null
+    private val maxMin = IntArray(2)
 
     private val requestPermissionLauncher: ActivityResultLauncher<String> =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -89,11 +93,12 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
         txtLatidos.text = "Frecuencia cardíaca: $heartRate"
         barraProgreso.progress = heartRate
 
-        // Enviar el valor del pulso cardíaco continuamente
         sendMessageToPhone("Frecuencia cardíaca: $heartRate")
+        val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+        val max = preferences.getInt("ritmo_max", 0)
+        val min = preferences.getInt("ritmo_min", 0)
 
-        // Si los latidos son 87 o más, iniciar la actividad de emergencia
-        if (heartRate >= 110) {
+        if (heartRate >= max || heartRate <= min) {
             val intent = Intent(this@GraficaActivity, EmergenciaActivity::class.java)
             startActivity(intent)
             finish()
@@ -118,30 +123,51 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
         }
     }
 
+
+
     override fun onMessageReceived(messageEvent: MessageEvent) {
         if (messageEvent.path == "/recordatory") {
             val message = String(messageEvent.data)
             Log.d("Recordatory", "Message received: $message")
+            val jsonMessage = message.removePrefix("Recordatorio: ").trim()
+            try {
+                val jsonObject = JSONObject(jsonMessage)
+                val medicamento = jsonObject.getString("medicamento")
+                val fechaInicio = jsonObject.getString("fechaInicio")
+                val idRecordatorio = jsonObject.getInt("idRecordatorio")
+                val hora = fechaInicio.split("T")[1] // "10:53:00"
+                val mensajeFormateado = "$medicamento a las $hora con id:$idRecordatorio"
+                val regex = Regex("""(.+?) a las (.+?) con id:(\d+)""")
+                val matchResult = regex.find(mensajeFormateado)
 
-            val regex = Regex("""(.+?) a las (.+?) con id:(\d+)""")
-            val matchResult = regex.find(message)
+                if (matchResult != null) {
+                    val (medicamentoExtraido, horaExtraida, idRecordatorioExtraido) = matchResult.destructured
+                    val mensajeCorto = "$medicamentoExtraido\n$horaExtraida"
 
-            if (matchResult != null) {
-                val (medicamento, horaCompleta, idRecordatorio) = matchResult.destructured
-                val hora = horaCompleta.split("T")[1] // Solo la hora
-
-                val mensajeCorto = "$medicamento\n$hora"
-
-                val intent = Intent(this, RecordatorioActivity::class.java).apply {
-                    putExtra("recordatorio_message", mensajeCorto)
-                    putExtra("id_recordatorio", idRecordatorio.toInt()) // Pasar el ID como extra
+                    val intent = Intent(this, RecordatorioActivity::class.java).apply {
+                        putExtra("recordatorio_message", mensajeCorto)
+                        putExtra("id_recordatorio", idRecordatorioExtraido.toInt())
+                    }
+                    startActivity(intent)
+                } else {
+                    Log.e("Recordatory", "Formato de mensaje no válido: $mensajeFormateado")
                 }
-                startActivity(intent)
-            } else {
-                Log.e("Recordatory", "Formato de mensaje no válido: $message")
+            } catch (e: JSONException) {
+                Log.e("Recordatory", "Error al parsear el mensaje JSON: ${e.message}")
             }
         }
+        if (messageEvent.path == "/maxmin") {
+            val maxMinValues = String(messageEvent.data).split(",")
+            val max = maxMinValues[0].toIntOrNull() ?: 0
+            val min = maxMinValues[1].toIntOrNull() ?: 0
+
+            // Guardar los valores en SharedPreferences para futuras comparaciones
+            val preferences = PreferenceManager.getDefaultSharedPreferences(this)
+            preferences.edit().putInt("ritmo_max", max).putInt("ritmo_min", min).apply()
+            }
     }
+
+
 
 
     private fun initializeSensor() {
@@ -164,11 +190,6 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
         } else {
             Log.d("MainActivity", "Evento de sensor no es de tipo frecuencia cardíaca")
         }
-    }
-
-    private fun updateHeartRateText(heartRate: Int) {
-        Log.d("MainActivity", "Actualizando UI con frecuencia cardíaca: $heartRate")
-        Log.d("MainActivity","Frecuencia Cardíaca: $heartRate")
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {

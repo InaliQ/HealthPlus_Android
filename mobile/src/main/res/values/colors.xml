@@ -9,5 +9,10 @@
     <color name="search_opaque">#ffaa3f</color>
     <color name="selected_background">#ffaa3f</color>
     <color name="default_background">#3d3d3d</color>
+    <color name="colorAlertText">#EF6C00</color>
+    <color name="colorReminderText">#1E88E5</color>
+    <color name="colorStatusText">#43A047</color>
+    <color name="colorHeartRateText">#D32F2F</color>
+
 
 </resources>

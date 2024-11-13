@@ -7,23 +7,18 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
-import com.google.android.gms.wearable.DataMapItem
-import com.google.android.gms.wearable.Wearable
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.gson.Gson
-import com.softli.health.apiservice.RetrofitClient
 import com.softli.health.config.SessionManager
 import com.softli.health.models.UsuarioModel
+import com.softli.health.models.UsuarioUserRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
+class MainActivity : AppCompatActivity() {
     lateinit var contexto: Context
     lateinit var emailInputLayout: TextInputLayout
     lateinit var emailInput: TextInputEditText
@@ -34,7 +29,6 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        Wearable.getDataClient(this).addListener(this)
         contexto = this
         sessionManager = SessionManager(this)
         contrasenaInputLayout = findViewById<TextInputLayout>(R.id.contrasenaInputLayout)
@@ -57,32 +51,39 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
 
     fun login(usuario: String, contrasenia: String) {
         Toast.makeText(this, "Iniciando sesión...", Toast.LENGTH_SHORT).show()
-        RetrofitClient.instance.postLogin(usuario, contrasenia).enqueue(object : Callback<ResponseBody> {
+        val request = UsuarioUserRequest(nombreUsuario = usuario, contrasenia = contrasenia)
+        RetrofitClient.instance.postLogin(request).enqueue(object : Callback<ResponseBody> {
             override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
                 if (response.isSuccessful) {
-                    var stringJson = response.body()?.string();
+                    val stringJson = response.body()?.string()
                     val gson = Gson()
-                    val usuario = gson.fromJson(stringJson, UsuarioModel::class.java)
-                    sessionManager.saveUser(usuario)
-                    Toast.makeText(contexto, "Bienvenido ${usuario.nombre}", Toast.LENGTH_SHORT)
-                        .show()
+                    val usuarioModel = gson.fromJson(stringJson, UsuarioModel::class.java)
+                    Log.d("MainActivity", "Response: $usuarioModel")
+                    val intent = Intent(this@MainActivity, InicioActivity::class.java)
                     startActivity(intent)
                     finish()
+
+                    if (usuarioModel != null ) {
+                        sessionManager.savePacienteId(usuarioModel.idPaciente)
+                        Toast.makeText(contexto, "Bienvenido", Toast.LENGTH_SHORT).show()
+
+                        sessionManager.savePacienteId(usuarioModel.idPaciente)
+
+
+                    } else {
+                        Toast.makeText(contexto, "Error al obtener los datos del paciente", Toast.LENGTH_SHORT).show()
+                    }
                 } else {
-                    Toast.makeText(
-                        contexto,
-                        "Error: ${response.errorBody()?.string()}",
-                        Toast.LENGTH_SHORT
-                    ).show();
+                    Toast.makeText(contexto, "Error: ${response.errorBody()?.string()}", Toast.LENGTH_SHORT).show()
                 }
             }
 
             override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
-                // Handle failure
                 Log.e("MainActivity", "Failure: ${t.message}")
             }
         })
     }
+
 
     fun formValido(): Boolean {
         var valido = true
@@ -99,23 +100,5 @@ class MainActivity : AppCompatActivity(), DataClient.OnDataChangedListener {
             emailInputLayout.error = ""
         }
         return valido
-    }
-
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        Log.d("MainActivity", "onDataChanged: $dataEvents")
-        for (event in dataEvents) {
-            if (event.type == DataEvent.TYPE_CHANGED) {
-                val dataItem = event.dataItem
-                if (dataItem.uri.path == "/heart_rate") {
-                    val dataMap = DataMapItem.fromDataItem(dataItem).dataMap
-                    val heartRate = dataMap.getInt("heart_rate")
-                    actualizarHeartRate(heartRate)
-                }
-            }
-        }
-    }
-
-    private fun actualizarHeartRate(heartRate: Int) {
-        Log.d("MainActivity", "Pulso cardíaco actualizado: $heartRate")
     }
 }

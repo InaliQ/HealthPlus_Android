@@ -1,14 +1,16 @@
 package com.softli.health.apiservice
 
+import com.softli.health.models.UsuarioUserRequest
 import okhttp3.ResponseBody
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.POST
-import retrofit2.http.Query
 
 interface AuthApiService {
-    @POST("Log/in")
+    @POST("users/Auth/loginUser")
     fun postLogin(
-        @Query("usuario") usuario: String,
-        @Query("contrasenia") contrasenia: String
+        @Body request: UsuarioUserRequest
     ): Call<ResponseBody>
 }
+
+

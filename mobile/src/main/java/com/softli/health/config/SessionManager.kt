@@ -1,37 +1,29 @@
 package com.softli.health.config
 
 import android.content.Context
+import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.softli.health.models.UsuarioModel
 
 class SessionManager(context: Context) {
-    private val sharedPreferences = context.getSharedPreferences("idgsSession", Context.MODE_PRIVATE)
-    fun saveUser(user: UsuarioModel) {
-        val json = Gson().toJson(user)
-        sharedPreferences.edit().putString("user", json).apply()
-        sharedPreferences.edit().putInt("user_id", user.idUsuario).apply()
-        sharedPreferences.edit().putInt("enfermero_id", user.enfermero.idEnfermero).apply()
+        private val prefs: SharedPreferences = context.getSharedPreferences("health_prefs", Context.MODE_PRIVATE)
+
+        fun savePacienteId(idPaciente: Int) {
+            prefs.edit().putInt("idPaciente", idPaciente).apply()
+        }
+
+        fun getPacienteId(): Int {
+            return prefs.getInt("idPaciente", -1)
+        }
+
+        fun saveMaxMin(max: Int, min: Int) {
+            prefs.edit().putInt("max", max).apply()
+            prefs.edit().putInt("min", min).apply()
+        }
+        fun getMaxMin(): Pair<Int, Int> {
+            val max = prefs.getInt("max", -1)
+            val min = prefs.getInt("min", -1)
+            return Pair(max, min)
+        }
+
     }
-    fun savePaciente(paciente: Paciente) {
-        val json = Gson().toJson(paciente)
-        sharedPreferences.edit().putString("paciente", json).apply()
-        sharedPreferences.edit().putInt("paciente_id", paciente.idPaciente).apply()
-    }
-    fun cleanPaciente() {
-        sharedPreferences.edit().remove("paciente").apply()
-        sharedPreferences.edit().remove("paciente_id").apply()
-    }
-    fun getUser(): UsuarioModel? {
-        val json = sharedPreferences.getString("user", null)
-        return Gson().fromJson(json, UsuarioModel::class.java)
-    }
-    fun getUserId(): Int? {
-        return sharedPreferences.getInt("user_id", -1)
-    }
-    fun getEnfermeroId(): Int? {
-        return sharedPreferences.getInt("enfermero_id", -1)
-    }
-    fun clearSession() {
-        sharedPreferences.edit().clear().apply()
-    }
-}
