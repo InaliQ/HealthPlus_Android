@@ -16,4 +16,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.342"
         app:srcCompat="@drawable/background" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/emergencia_item"
+        tools:layout_editor_absoluteX="-30dp"
+        tools:layout_editor_absoluteY="255dp" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/exclamation"
+        tools:layout_editor_absoluteX="130dp"
+        tools:layout_editor_absoluteY="-127dp" />
+
+    <ImageView
+        android:id="@+id/imageView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:srcCompat="@drawable/exclamation"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="508dp" />
+
+    <Button
+        android:id="@+id/btnAtendido"
+        android:layout_width="191dp"
+        android:layout_height="101dp"
+        android:text="Emergencia Atendida"
+        tools:layout_editor_absoluteX="110dp"
+        tools:layout_editor_absoluteY="439dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,5 +1,6 @@
 package com.softli.health.apiservice
 
+import com.softli.health.models.AlertaRequest
 import com.softli.health.models.RitmoMaxMinResponse
 import com.softli.health.models.RitmoRequest
 import retrofit2.Call
@@ -18,4 +19,7 @@ interface MandarApiService {
 
     @POST("Recordatorio/CompletarRecordatorio/{idRecordatorio}")
     fun cambiarEstatus(@Path("idRecordatorio") idRecordatorio: Int): Call<String>
+
+    @POST("Alerta/agregar")
+    fun agregarAlerta(@Body request: AlertaRequest): Call<Void>
 }

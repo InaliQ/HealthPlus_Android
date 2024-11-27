@@ -19,10 +19,8 @@ class MainActivity : ComponentActivity(), DataClient.OnDataChangedListener {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
-
         //textViewSensorData = findViewById(R.id.textViewSensorData)
 
-        // Connect to the DataClient to listen to data changes
         Wearable.getDataClient(this).addListener(this)
         cambiarIntent();
     }

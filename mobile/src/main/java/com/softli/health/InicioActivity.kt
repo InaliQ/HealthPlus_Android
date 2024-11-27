@@ -24,6 +24,7 @@ import com.google.gson.Gson
 import com.softli.health.apiservice.InfoApiService
 import com.softli.health.apiservice.MandarApiService
 import com.softli.health.config.SessionManager
+import com.softli.health.models.AlertaRequest
 import com.softli.health.models.RitmoMaxMinResponse
 import com.softli.health.models.RitmoRequest
 import kotlinx.coroutines.CoroutineScope
@@ -155,6 +156,18 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
                 }
 
             }
+            if (messageEvent.path == "/emergency_status") {
+                val message = String(messageEvent.data)
+                val alerta = "Emergencia con el paciente"
+
+                estatusTextView.text = "Estatus: $alerta"
+                guardarAlerta(sessionManager.getPacienteId(), alerta)
+
+                val intent2 = Intent(this@InicioActivity,InfoActivity::class.java)
+                // Iniciar InfoActivity
+                startActivity(intent2)
+            }
+
 
 
         }
@@ -174,6 +187,24 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Log.e("RitmoCardiaco", "Error en la conexión", t)
             }
+        })
+    }
+
+    private fun guardarAlerta(idPaciente: Int, alerta: String) {
+        val request = AlertaRequest(idPaciente, alerta)
+        RetrofitClient.instaceMandarInfo.agregarAlerta(request).enqueue(object : Callback<Void>{
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Log.d("Alerta", "Alerta guadarda correctamente")
+                } else {
+                    Log.e("Alerta", "Error al guardar: ${response.errorBody()?.string()}")
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
         })
     }
 

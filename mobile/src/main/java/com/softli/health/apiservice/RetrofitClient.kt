@@ -9,9 +9,9 @@ import javax.net.ssl.*
 
 object RetrofitClient {
 
-    private const val BASE_URL = "https://192.168.1.70:7283/api/"
+    //private const val BASE_URL = "https://192.168.1.70:7283/api/"
     //private const val BASE_URL = "https://192.168.137.247:7283/api/"
-    //private const val BASE_URL = "https://healthplus-d5f0a3dqg6fwfxbq.mexicocentral-01.azurewebsites.net/api/ "
+    private const val BASE_URL = "https://healthplus-d5f0a3dqg6fwfxbq.mexicocentral-01.azurewebsites.net/api/ "
     private val unsafeOkHttpClient: OkHttpClient
         get() {
             return try {
