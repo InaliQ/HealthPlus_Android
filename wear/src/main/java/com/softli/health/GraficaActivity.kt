@@ -95,10 +95,12 @@ class GraficaActivity : ComponentActivity(), MessageClient.OnMessageReceivedList
 
         sendMessageToPhone("Frecuencia cardíaca: $heartRate")
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
-        val max = preferences.getInt("ritmo_max", 0)
-        val min = preferences.getInt("ritmo_min", 0)
+        val max = preferences.getInt("ritmo_max", 80)
+        val min = preferences.getInt("ritmo_min", 60)
+        Log.d("Runnable", "Máximo: $max, Mínimo: $min")
 
-        if (heartRate >= max || heartRate <= min) {
+        if (heartRate >= max) {
+            sensorManager.unregisterListener(this)
             val intent = Intent(this@GraficaActivity, EmergenciaActivity::class.java)
             startActivity(intent)
             finish()

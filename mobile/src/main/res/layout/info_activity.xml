@@ -18,34 +18,44 @@
         app:srcCompat="@drawable/background" />
 
     <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="116dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnAtendido"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/emergencia_item" />
+
+    <ImageView
         android:id="@+id/imageView6"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/emergencia_item"
-        tools:layout_editor_absoluteX="-30dp"
-        tools:layout_editor_absoluteY="255dp" />
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageView7"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/exclamation" />
 
     <ImageView
         android:id="@+id/imageView7"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/btnAtendido"
         app:srcCompat="@drawable/exclamation"
-        tools:layout_editor_absoluteX="130dp"
-        tools:layout_editor_absoluteY="-127dp" />
-
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/exclamation"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="508dp" />
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/btnAtendido"
-        android:layout_width="191dp"
-        android:layout_height="101dp"
+        android:layout_width="246dp"
+        android:layout_height="141dp"
+        android:alpha="80"
         android:text="Emergencia Atendida"
-        tools:layout_editor_absoluteX="110dp"
-        tools:layout_editor_absoluteY="439dp" />
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

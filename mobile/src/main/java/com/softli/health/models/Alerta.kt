@@ -3,8 +3,8 @@ package com.softli.health.models
 import com.google.gson.annotations.SerializedName
 
 data class AlertaRequest(
-    val idPaciente: Int,
-    val alerta: String
+    val descripcion: String,
+    val idPaciente: Int
 )
 data class Alerta (
     @SerializedName("idAlerta") val idAlerta: Int,

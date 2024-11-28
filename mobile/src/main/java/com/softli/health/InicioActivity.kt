@@ -75,10 +75,26 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
                             val ultimaAlerta = jsonObject.getString("ultimaAlerta")
                             val ultimoRecordatorio = jsonObject.getString("ultimoRecordatorio")
 
-                            ultimaAlertaTextView.text = "Última alerta: $ultimaAlerta"
-                            ultimoRecordatorioTextView.text = "Último recordatorio: $ultimoRecordatorio"
+
+                            val ultimaAlertaJson = JSONObject(ultimaAlerta)
+                            val ultimoRecordatorioJson = JSONObject(ultimoRecordatorio)
+
+                            val descripcion = ultimaAlertaJson.getString("descripcion")
+                            val fecha = ultimaAlertaJson.getString("fechaHora")
+
+                            val medicamento = ultimoRecordatorioJson.getString("medicamento")
+                            val fechaInicio = ultimoRecordatorioJson.getString("fechaInicio")
+                            val hora = fechaInicio.substring(11, 19)
+
+                            val mensaje1 = "Descripcion: $descripcion\nFecha: $fecha"
+                            val mensaje2 = "Medicamento: $medicamento\nHora: $hora"
+                            ultimaAlertaTextView.text = "Última alerta: $mensaje1"
+                            ultimoRecordatorioTextView.text ="Último recordatorio: $mensaje2"
+
+
                             val mensaje = "Recordatorio: $ultimoRecordatorio"
                             enviarMensajeAWearable("/recordatory", mensaje)
+                            requestNotificationPermission("Recordatorio de medicamento", "Tienes medicamentos que tomar")
                         } catch (e: JSONException) {
                             Log.e("JSON Error", "Error al analizar JSON: ${e.message}")
                         }
@@ -94,7 +110,6 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
             }
         })
 
-        requestNotificationPermission("Recordatorio de medicamento", "Tienes medicamentos que tomar")
     }
 
     private fun enviarMensajeAWearable(path: String, message: String) {
@@ -158,15 +173,24 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
             }
             if (messageEvent.path == "/emergency_status") {
                 val message = String(messageEvent.data)
-                val alerta = "Emergencia con el paciente"
+                val descripcion = "Emergencia con el paciente"
+                val idPaciente = sessionManager.getPacienteId()
+                guardarAlerta(idPaciente, descripcion)
 
-                estatusTextView.text = "Estatus: $alerta"
-                guardarAlerta(sessionManager.getPacienteId(), alerta)
-
-                val intent2 = Intent(this@InicioActivity,InfoActivity::class.java)
-                // Iniciar InfoActivity
-                startActivity(intent2)
+                val intent = Intent(this@InicioActivity,InfoActivity::class.java)
+                startActivity(intent)
             }
+
+            if (messageEvent.path == "/confirmation") {
+                val id = String(messageEvent.data)
+                val idRecordatorio = id.toIntOrNull() // Convertir el id a un número entero (puede ser null)
+                if (idRecordatorio != null) {
+                    confirmarRecodatorio(idRecordatorio) // Llamamos a la función si el id es válido
+                } else {
+                    Log.e("Recordatorio", "Error: El ID del recordatorio es inválido o nulo")
+                }
+            }
+
 
 
 
@@ -175,38 +199,46 @@ class InicioActivity : AppCompatActivity(), MessageClient.OnMessageReceivedListe
 
     private fun guardarRitmoCardiaco(idPaciente: Int, medicion: Int) {
         val request = RitmoRequest(idPaciente, medicion)
-        RetrofitClient.instaceMandarInfo.guardarRitmoCardiaco(request).enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Log.d("RitmoCardiaco", "Ritmo cardíaco guardado correctamente")
-                } else {
-                    Log.e("RitmoCardiaco", "Error al guardar: ${response.errorBody()?.string()}")
-                }
+        RetrofitClient.instaceMandarInfo.guardarRitmoCardiaco(request).enqueue(object : Callback<ResponseBody> {
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("RitmoCardiaco", "Ritmo guardado correctamente")
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                Log.e("RitmoCardiaco", "Error en la conexión", t)
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("RitmoCardiaco", "Error al guardar el ritmo", t)
             }
         })
     }
 
-    private fun guardarAlerta(idPaciente: Int, alerta: String) {
-        val request = AlertaRequest(idPaciente, alerta)
-        RetrofitClient.instaceMandarInfo.agregarAlerta(request).enqueue(object : Callback<Void>{
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    Log.d("Alerta", "Alerta guadarda correctamente")
-                } else {
-                    Log.e("Alerta", "Error al guardar: ${response.errorBody()?.string()}")
-                }
+    private fun guardarAlerta(idPaciente: Int, descripcion: String) {
+        val request = AlertaRequest(idPaciente = idPaciente, descripcion = descripcion)
+        RetrofitClient.instaceMandarInfo.agregarAlerta(request).enqueue(object : Callback<ResponseBody>{
+            override fun onResponse(call: Call<ResponseBody>, response: Response<ResponseBody>) {
+                Log.d("Alerta", "Alerta guardada correctamente")
             }
 
-            override fun onFailure(call: Call<Void>, t: Throwable) {
-                TODO("Not yet implemented")
+            override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+                Log.e("Alerta", "Error al guardar la alerta", t)
             }
 
         })
     }
+
+    private fun confirmarRecodatorio(idRecordatorio: Int) {
+        RetrofitClient.instaceMandarInfo.cambiarEstatus(idRecordatorio).enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    Log.d("Recordatorio", "Recordatorio confirmado correctamente")
+                } else {
+                    Log.e("Recordatorio", "Error al confirmar el recordatorio: ${response.errorBody()?.string()}")
+                }
+            }
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Log.e("Recordatorio", "Error al confirmar el recordatorio", t)
+            }
+        })
+    }
+
 
     private fun requestNotificationPermission(title: String, message: String) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {

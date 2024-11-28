@@ -15,6 +15,7 @@ class InfoActivity : AppCompatActivity() {
         vibrarTelefono()
         val btnAtendido = findViewById<Button>(R.id.btnAtendido)
         btnAtendido.setOnClickListener {
+            detenerVibracion()
             val intent = Intent(this, InicioActivity::class.java)
             startActivity(intent)
             finish()
@@ -28,5 +29,9 @@ class InfoActivity : AppCompatActivity() {
             val patron = longArrayOf(0, 500, 200, 500) // 0ms de espera, luego 500ms de vibración, 200ms de pausa, y otra vibración de 500ms.
             vibrator.vibrate(patron, 0) // El último parámetro (0) es el índice de repetición del patrón
         }
+    }
+    private fun detenerVibracion() {
+        val vibrator = getSystemService(VIBRATOR_SERVICE) as Vibrator
+        vibrator.cancel() // Detiene cualquier vibración en curso
     }
 }
